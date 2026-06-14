@@ -1,0 +1,56 @@
+# venv
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+
+# Modèles & binaires (lourds, gérés par scripts/download_models.py)
+resources/models/
+resources/ffmpeg/ffmpeg.exe
+resources/ffmpeg/ffprobe.exe
+resources/ollama/ollama.exe
+
+# Outputs locaux
+*.log
+*.tmp
+recordings/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Large model and binary files (use Git LFS for these instead of committing)
+*.nemo
+*.safetensors
+*.pt
+*.ckpt
+*.bin
+*.model
+*.tar.gz
+
+# Caches, notebooks and local artifacts
+.DS_Store
+Thumbs.db
+.mypy_cache/
+.cache/
+.ipynb_checkpoints/
+*.ipynb
+
+# Local project artifacts
+localpycs/
+
