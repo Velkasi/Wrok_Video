@@ -1,0 +1,87 @@
+# Configuration par défaut — Réunion Résumé
+# Override via fichier user : %APPDATA%\reunion-resume\config.yaml
+
+# Dossier unique : video enregistree + resume Markdown cohabitent ici.
+# Defaut : ~/Documents/Resume_Wrok (calcule par Path.home() en Python).
+output: {}
+# Pour personnaliser, decommente et ajuste :
+# output:
+#   folder: "C:/Users/<user>/Documents/Resume_Wrok"
+
+transcription:
+  # Backend de transcription : 'whisper' ou 'canary' (necessite extra [canary]).
+  backend: "whisper"
+  # Modeles Whisper : small | medium | large-v3 | large-v3-turbo
+  # Modeles Canary  : canary-1b-flash | canary-1b
+  model: "medium"
+  language: "fr"
+  # auto : detecte CUDA, fallback CPU. Forcer "cpu" ou "cuda".
+  device: "auto"
+  # auto : int8 sur CPU (rapide), float16 sur GPU. Forcer si besoin.
+  compute_type: "auto"
+  # Options Whisper-specifiques (ignorees par Canary)
+  vad_filter: true
+  beam_size: 5
+
+ollama:
+  # Choix de modele. Quants Llama 3.1 8B (par ordre de qualite croissante / VRAM) :
+  #   q4_K_M : 4.7 GB (defaut, fonctionne sur 6 GB+ VRAM)
+  #   q5_K_M : 5.7 GB (+ qualite, 8 GB+ VRAM)
+  #   q6_K   : 6.6 GB (8 GB+ VRAM, full GPU sur RTX 5070)
+  #   q8_0   : 8.5 GB (12 GB+ VRAM)
+  # Modeles plus gros (12B-14B) plus qualitatifs :
+  #   qwen2.5:14b-instruct-q4_K_M : excellent FR (~9 GB)
+  #   mistral-small:24b-instruct-q4_K_M : top FR (~14 GB, 16 GB VRAM)
+  model: "llama3.1:8b-instruct-q4_K_M"
+  host: "127.0.0.1"
+  port: 11434
+  startup_timeout: 30
+  # GPU/CPU offload :
+  #   -1  : auto (Ollama decide selon VRAM dispo) ← recommande
+  #   999 : forcer toutes les couches sur GPU
+  #   0   : forcer CPU only
+  num_gpu: -1
+  # Threads CPU (0 = auto = nombre de cores physiques)
+  num_thread: 0
+  # Contexte max en tokens. 8192 par defaut, 16384 utile pour transcripts longs (1h+).
+  num_ctx: 8192
+
+recording:
+  # Capture écran
+  screen:
+    enabled: true
+    fps: 10
+    monitor: 1            # 0 = tous, 1+ = écran spécifique
+  # Capture micro
+  mic:
+    enabled: true
+    samplerate: 16000
+    device: null          # null = défaut système
+  # Capture audio système (loopback)
+  system_audio:
+    enabled: true
+    samplerate: 16000
+
+prompts:
+  summary_system: |
+    Tu es un assistant qui résume des réunions professionnelles en français.
+    Sois concis, factuel, neutre. N'invente jamais d'information absente du transcript.
+  summary_user_template: |
+    Voici la transcription d'une réunion. Produis un résumé structuré au format Markdown avec les sections suivantes :
+
+    ## Résumé exécutif
+    (3-5 phrases)
+
+    ## Points clés
+    (liste à puces)
+
+    ## Décisions
+    (liste à puces, ou "Aucune décision identifiée")
+
+    ## Actions
+    (liste de cases à cocher au format `- [ ] @responsable — action — échéance`)
+
+    Transcription :
+    ```
+    {transcript}
+    ```
